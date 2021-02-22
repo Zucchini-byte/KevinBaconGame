@@ -112,5 +112,7 @@ public class KevinBaconGame {
 //        System.out.println(t.outNeighbors("Dartmouth (Earl thereof)"));
         System.out.println(t);
         System.out.println(GraphLib.getPath(t, "Alice"));
+        System.out.println(GraphLib.missingVertices(game.gameGraph, t));
+        System.out.println(GraphLib.averageSeparation(t,"Dartmouth (Earl thereof)"));
     }
 }

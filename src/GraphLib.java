@@ -82,9 +82,20 @@ public class GraphLib {
 	 * @return
 	 */
 	public static <V,E> Set<V> missingVertices(Graph<V,E> graph, Graph<V,E> subgraph){
-		Set<V> res = new HashSet<V>();
+		Set<V> missing = new HashSet<V>();
+		Set<V> subgraphVert = new HashSet<>();
 
-		return res;
+		for(V v: subgraph.vertices()){
+			subgraphVert.add(v);
+		}
+
+		for(V v: graph.vertices()){
+			if(!subgraphVert.contains(v)){
+				missing.add(v);
+			}
+		}
+
+		return missing;
 
 
 	}
@@ -92,18 +103,34 @@ public class GraphLib {
 
 	/**
 	 * Find the average distance-from-root in a shortest path tree, without enumerating all the paths.
-	 * Warning: this one takes some thinking to do correctly and efficiently; don't put itoff for the last minute.
+	 * Warning: this one takes some thinking to do correctly and efficiently; don't put it off for the last minute.
 	 * Hint: the average is the sum divided by the number, and computing the sum is now a tree recursion problem
 	 * (in which you need to pass information from parent to child, too).
 	 * @param tree
-	 * @param root
+	 * @param root - center of the universe
 	 * @param <V>
 	 * @param <E>
 	 * @return
 	 */
 	public static <V,E> double averageSeparation(Graph<V,E> tree, V root){
-		return 0;
+		int sum = 0;
+		int count = tree.numVertices()-1;
+
+		sum = totalStep(tree, root, 1);
 
 
+
+		return (double)sum / count;
+	}
+
+	public static <V,E> int totalStep(Graph<V,E> tree, V root, int path){
+		int total = 0;
+		for(V v: tree.inNeighbors(root)){
+			total += path ;
+			total += totalStep(tree, v, path+1);
+		}
+
+
+		return total;
 	}
 }
