@@ -17,20 +17,20 @@ public class GraphLib {
 	 * @return a graph of
 	 */
 	public static <V,E> Graph<V,E> bfs(Graph<V,E> g, V source){
-		Map<V,V> backTrack = new HashMap<V,V>();
-		backTrack.put(source, null);
+		Graph<V,E> pathTree = new AdjacencyMapGraph<V,E>();
 		Set<V> visited = new HashSet<>();
 		Queue<V> queue = new LinkedList<>();
 //		enqueue the start vertex s onto the queue
 		visited.add(source);
 		queue.add(source);
+		pathTree.insertVertex(source);
 
 //		remember that s has been added
 //		repeat until we find the goal vertex or the queue is empty:
 		while( !queue.isEmpty()){
 
 //		dequeue the next vertex u from the queue
-		V u = queue.remove();
+			V u = queue.remove();
 //		(maybe do something while here)
 			//		for all vertices v that are adjacent to u
 			for(V adjacent: g.outNeighbors(u)){
@@ -40,30 +40,29 @@ public class GraphLib {
 				//		remember that v has been added
 					visited.add(adjacent);
 					queue.add(adjacent);
-					backTrack.put(adjacent,u);
+					pathTree.insertVertex(adjacent);
+					pathTree.insertDirected(adjacent, u,g.getLabel(adjacent, u));
 				}
 			}
 
 		}
 
-		Graph<V,E> pathTree = new AdjacencyMapGraph<V,E>();
-
-
-
-
+		return pathTree;
 	}
 
 	/**
 	 * Given a shortest path tree and a vertex, construct a path from the
 	 * vertex back to the center of the universe.
-	 * @param tree
-	 * @param v
+	 * @param tree tree from BST
+	 * @param v - from current vertex
 	 * @param <V>
 	 * @param <E>
 	 * @return
 	 */
 	public static <V,E> List<V> getPath(Graph<V,E> tree, V v){
+		ArrayList<V> path = new ArrayList<V>();
 
+		return path;
 
 
 	}
@@ -79,9 +78,9 @@ public class GraphLib {
 	 * @return
 	 */
 	public static <V,E> Set<V> missingVertices(Graph<V,E> graph, Graph<V,E> subgraph){
+		Set<V> res = new HashSet<V>();
 
-
-
+		return res;
 
 
 	}
@@ -99,8 +98,7 @@ public class GraphLib {
 	 * @return
 	 */
 	public static <V,E> double averageSeparation(Graph<V,E> tree, V root){
-
-
+		return 0;
 
 
 	}

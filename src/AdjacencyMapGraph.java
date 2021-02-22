@@ -1,5 +1,6 @@
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Adjancency Map implementation of the Graph interface
@@ -80,6 +81,17 @@ public class AdjacencyMapGraph<V,E> implements Graph<V,E> {
 		// insert in both directions
 		insertDirected(u, v, e);
 		insertDirected(v, u, e);
+	}
+
+	public void insertUndirected(Set<V> v, E e){
+		for(V s : v){
+			for( V u: v){
+				if(!s.equals(u)){
+					insertDirected(u, s, e);
+					insertDirected(s, u, e);
+				}
+			}
+		}
 	}
 
 	public void removeVertex(V v) {
