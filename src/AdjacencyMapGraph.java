@@ -83,16 +83,6 @@ public class AdjacencyMapGraph<V,E> implements Graph<V,E> {
 		insertDirected(v, u, e);
 	}
 
-	public void insertUndirected(Set<V> v, E e){
-		for(V s : v){
-			for( V u: v){
-				if(!s.equals(u)){
-					insertDirected(u, s, e);
-					insertDirected(s, u, e);
-				}
-			}
-		}
-	}
 
 	public void removeVertex(V v) {
 		if (!out.keySet().contains(v)) return;

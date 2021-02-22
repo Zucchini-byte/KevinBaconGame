@@ -61,10 +61,14 @@ public class GraphLib {
 	 */
 	public static <V,E> List<V> getPath(Graph<V,E> tree, V v){
 		ArrayList<V> path = new ArrayList<V>();
+		V current = v;
+		path.add(current);
+		while(tree.outDegree(current)>0 ){
+			for(V u :tree.outNeighbors(current)) current = u;
+			path.add(current);
+		}
 
 		return path;
-
-
 	}
 
 	/**

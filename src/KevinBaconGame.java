@@ -97,13 +97,20 @@ public class KevinBaconGame {
         }
     }
 
+
+
     public static void main(String[] args){
 
        KevinBaconGame game = new KevinBaconGame();
-        System.out.println(game.actorMap);
-        System.out.println(game.movieMap);
-        System.out.println(game.movieToActors);
+//        System.out.println(game.actorMap);
+//        System.out.println(game.movieMap);
+//        System.out.println(game.movieToActors);
         game.createGraph();
-        System.out.println(game.gameGraph);
+//        System.out.println(game.gameGraph);
+        Graph<String, Set<String>> t = new AdjacencyMapGraph<>();
+        t = (GraphLib.bfs(game.gameGraph, "Dartmouth (Earl thereof)"));
+//        System.out.println(t.outNeighbors("Dartmouth (Earl thereof)"));
+        System.out.println(t);
+        System.out.println(GraphLib.getPath(t, "Alice"));
     }
 }
