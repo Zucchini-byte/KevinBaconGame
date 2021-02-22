@@ -2,111 +2,106 @@ import java.util.*;
 
 /**
  * Beginnings of a library for graph analysis code
- * 
- * @author Chris Bailey-Kellogg, Dartmouth CS 10, Fall 2017 (with some inspiration from previous terms)
- * 
+ *
+ * based off of @author Chris Bailey-Kellogg, Dartmouth CS 10, Fall 2017 (with some inspiration from previous terms)
+ *
  */
 public class GraphLib {
-	/**
-	 * Orders vertices in decreasing order by their in-degree
-	 * @param g		graph
-	 * @return		list of vertices sorted by in-degree, decreasing (i.e., largest at index 0)
-	 */
-	public static <V,E> List<V> verticesByInDegree(Graph<V,E> g) {
-		List<V> vs = new ArrayList<V>();
-		for (V v : g.vertices()) vs.add(v);
-		vs.sort((v1, v2) -> g.inDegree(v2) - g.inDegree(v1));
-		return vs;
-	}
 
 	/**
-	 * Takes a random walk from a vertex, to a random one if its out-neighbors, to a random one of its out-neighbors
-	 * Keeps going as along as a random number is less than "continueProb"
-	 * Stops earlier if no step can be taken (i.e., reach a vertex with no out-edge)
-	 * @param g			graph to walk on
-	 * @param start		initial vertex (assumed to be in graph)
-	 * @param keepOn		probability of continuing each time -- should be between 0 and 1 (non-inclusive)
-	 * @return		a list of vertices starting with start, each with an edge to the sequentially next in the list
-	 * 			    null if start isn't in graph
+	 * BFS to find shortest path tree for a current center of the universe. Return a path tree as a Graph.
+	 * @param g A graph
+	 * @param source The vertex we start from. (Center of the Universe)
+	 * @param <V>
+	 * @param <E>
+	 * @return a graph of
 	 */
-	public static <V,E> List<V> randomWalk(Graph<V,E> g, V start, double keepOn) {
-		if (!g.hasVertex(start) || keepOn <= 0 || keepOn >= 1) return null;
-		List<V> path = new ArrayList<V>();
-		path.add(start);
-		V curr = start;
-		while (Math.random()<keepOn) {
-			if (g.outDegree(curr) == 0) return path;
-			// Pick a neighbor index
-			int nbr = (int)(g.outDegree(curr) * Math.random());
-			// Iterate through the out-neighbors the given number of times
-			Iterator<V> iter = g.outNeighbors(curr).iterator();
-			V next = iter.next();
-			while (nbr > 0) {
-				next = iter.next();
-				nbr--;
-			}
-			// Got to the right neighbor; continue from there
-			path.add(next);
-			curr = next;
-		}
+	public static <V,E> Graph<V,E> bfs(Graph<V,E> g, V source){
+		Map<V,V> backTrack = new HashMap<V,V>();
+		backTrack.put(source, null);
+		Set<V> visited = new HashSet<>();
+		Queue<V> queue = new LinkedList<>();
+//		enqueue the start vertex s onto the queue
+		visited.add(source);
+		queue.add(source);
 
-		return path;
-	}
-	
-	/**
-	 * Takes a number of random walks from random vertices, keeping track of how many times it goes to each vertex
-	 * Doesn't actually keep the walks themselves
-	 * @param g			graph to walk on
-	 * @param keepOn		probability of continuing each time -- should be between 0 and 1 (non-inclusive)
-	 * @param numWalks	how many times to do that
-	 * @return			vertex-hitting frequencies
-	 */
-	public static <V,E> Map<V,Integer> randomWalks(Graph<V,E> g, double keepOn, int numWalks) {
-		if (keepOn <= 0 || keepOn >= 1) return null;
-		
-		// Initialize all frequencies to 0
-		Map<V,Integer> freqs = new HashMap<V,Integer>();
-		for (V v : g.vertices()) freqs.put(v, 0);
-		
-		for (int i=0; i<numWalks; i++) {
-			// Pick a start index
-			int start = (int)(g.numVertices()*Math.random());
-			// Iterate through vertices till get there
-			Iterator<V> iter = g.vertices().iterator();
-			V curr = iter.next();
-			while (start > 0) {
-				curr = iter.next();
-				start--;
-			}
-			while (Math.random()<keepOn && g.outDegree(curr)>0) {
-				// Pick a neighbor index
-				int nbr = (int)(g.outDegree(curr) * Math.random());
-				// Iterate through the out-neighbors the given number of times
-				iter = g.outNeighbors(curr).iterator();
-				V next = iter.next();
-				while (nbr > 0) {
-					next = iter.next();
-					nbr--;
+//		remember that s has been added
+//		repeat until we find the goal vertex or the queue is empty:
+		while( !queue.isEmpty()){
+
+//		dequeue the next vertex u from the queue
+		V u = queue.remove();
+//		(maybe do something while here)
+			//		for all vertices v that are adjacent to u
+			for(V adjacent: g.outNeighbors(u)){
+				//		if haven't already added v
+				if(!visited.contains(adjacent)){
+				//		enqueue v onto the queue
+				//		remember that v has been added
+					visited.add(adjacent);
+					queue.add(adjacent);
+					backTrack.put(adjacent,u);
 				}
-				// Keep frequency count
-				freqs.put(next, 1+freqs.get(next));
-				curr = next;
-			}			
+			}
+
 		}
 
-		return freqs;
+		Graph<V,E> pathTree = new AdjacencyMapGraph<V,E>();
+
+
+
+
+	}
+
+	/**
+	 * Given a shortest path tree and a vertex, construct a path from the
+	 * vertex back to the center of the universe.
+	 * @param tree
+	 * @param v
+	 * @param <V>
+	 * @param <E>
+	 * @return
+	 */
+	public static <V,E> List<V> getPath(Graph<V,E> tree, V v){
+
+
+
+	}
+
+	/**
+	 * Given a graph and a subgraph (here shortest path tree),
+	 * determine which vertices are in the graph but not the subgraph
+	 * (here, not reached by BFS).
+	 * @param graph
+	 * @param subgraph
+	 * @param <V>
+	 * @param <E>
+	 * @return
+	 */
+	public static <V,E> Set<V> missingVertices(Graph<V,E> graph, Graph<V,E> subgraph){
+
+
+
+
+
 	}
 
 
 	/**
-	 * Orders vertices in decreasing order by their frequency in the map
-	 * @param g		graph
-	 * @return		list of vertices sorted by frequency, decreasing (i.e., largest at index 0)
+	 * Find the average distance-from-root in a shortest path tree, without enumerating all the paths.
+	 * Warning: this one takes some thinking to do correctly and efficiently; don't put itoff for the last minute.
+	 * Hint: the average is the sum divided by the number, and computing the sum is now a tree recursion problem
+	 * (in which you need to pass information from parent to child, too).
+	 * @param tree
+	 * @param root
+	 * @param <V>
+	 * @param <E>
+	 * @return
 	 */
-	public static <V,E> List<V> verticesByFrequency(Graph<V,E> g, Map<V,Integer> freqs) {
-		List<V> vs = new ArrayList<V>();
-		for (V v : g.vertices()) vs.add(v);
-		vs.sort((v1, v2) -> freqs.get(v2) - freqs.get(v1));
-		return vs;
+	public static <V,E> double averageSeparation(Graph<V,E> tree, V root){
+
+
+
+
 	}
 }
