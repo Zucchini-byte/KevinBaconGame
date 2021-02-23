@@ -9,6 +9,8 @@ public class KevinBaconGame {
     private Map<Integer, String> actorMap;
     private Map<Integer, Set<Integer>> movieToActors;
     private Graph<String, Set<String>> gameGraph;
+    private Graph<String, Set<String>> BFS;
+    private String command = "";
 
     public KevinBaconGame(){
         try{
@@ -22,6 +24,173 @@ public class KevinBaconGame {
 
         gameGraph = new AdjacencyMapGraph<>();
 
+    }
+
+    public void startGame(String center){
+        createGraph();
+        BFS = GraphLib.bfs(gameGraph, center);
+        printCommand();
+        printCenter(center);
+        Scanner sc = new Scanner(System.in);
+        command = sc.next();
+        while(!command.equals("q")){
+            // list top/bottom center of universe, sorted by average separation
+            if(command.equals("c")){
+                int bestCenters = sc.nextInt();
+
+                if(Math.abs(bestCenters) > gameGraph.numVertices()){
+                    System.out.println("Please enter a number that's smaller or equal to the total of " + gameGraph.numVertices());
+                    try {
+                        bestCenters = sc.nextInt();
+                    }
+                    catch (InputMismatchException e){
+                        System.out.println("Please insert a number");
+
+                    }
+                }
+
+                // make a PriorityQueue of a Map<center, average separation>
+                Map<String, Double> map = new HashMap<>();
+                Queue<String> queue = new PriorityQueue<String>();
+
+                if(bestCenters > 0) {
+                    System.out.println("Top " + bestCenters + " center, sorted by average separation");
+                    queue = new PriorityQueue<String>((String s1, String s2) -> (int) ((map.get(s2) - map.get(s1)) * 100));
+                }
+                else{
+                    System.out.println("Bottom " + Math.abs(bestCenters) + " center, sorted by average separation");
+                    queue = new PriorityQueue<String>((String s1, String s2) -> (int) ((map.get(s1) - map.get(s2)) * 100));
+
+                }
+
+                // put value in map
+                for( String s:gameGraph.vertices()){
+                    double avgSeparation = GraphLib.averageSeparation(GraphLib.bfs(gameGraph,s),s);
+                    map.put(s, avgSeparation);
+                    queue.add(s);
+                }
+
+
+
+
+                for(int i = 0; i < Math.abs(bestCenters) ; i++){
+                    String s = queue.remove();
+//                    System.out.println(s);
+                    System.out.printf( "%4.2f %s\n", map.get(s), s );
+                }
+
+
+
+            }
+            // list actors sorted by degree, with degree between low and high
+            else if(command.equals("d")){
+                int low = Integer.parseInt(sc.next());
+                int high = Integer.parseInt(sc.next());
+                Map<Integer, Set<String>> degreeList = new HashMap<>();
+                System.out.println("List of actors sorted by degree: ");
+
+                for (String vertex : gameGraph.vertices()) {
+                    if (gameGraph.inDegree(vertex) >= low && gameGraph.inDegree(vertex) <= high) {
+                        if (degreeList.get(gameGraph.inDegree(vertex)) == null) {
+                            degreeList.put(gameGraph.inDegree(vertex), new HashSet<>());
+                        }
+                        degreeList.get(gameGraph.inDegree(vertex)).add(vertex);
+                    }
+                }
+
+                for (int degree : degreeList.keySet()) {
+                    System.out.println("List of actors with " + degree + " degrees: ");
+                    for (String actor : degreeList.get(degree)) {
+                        System.out.println(actor);
+                    }
+                }
+
+            }
+            // list actors with infinite separation from the current center
+            else if(command.equals("i")){
+                System.out.println(GraphLib.missingVertices(gameGraph, BFS));
+
+            }
+            // <name> find path from <name> to current center of the universe
+            else if(command.equals("p")){
+                String name = sc.nextLine();
+                name = name.replaceAll("\\s", "");
+                while(!gameGraph.hasVertex(name)){
+                    System.out.println("Name not found, please input a valid name");
+                    name = sc.nextLine();
+                }
+
+                List<String> path = GraphLib.getPath(BFS, name);
+
+                for(int i = 0; i<path.size()-1; i++){
+                    System.out.println(path.get(i) + " was in " + BFS.getLabel(path.get(i), path.get(i+1)) + " with " + path.get(i+1) );
+                }
+
+            }
+            //  <low> <high>: list actors sorted by non-infinite separation from the current center,
+            //  with separation between low and high
+            else if(command.equals("s")){
+                int low = Integer.parseInt(sc.next());
+                int high = Integer.parseInt(sc.next());
+                Map<Integer, Set<String>> degreeSeparationList = new HashMap<>();
+                Set<String> visited= new HashSet<>();
+                visited.add(center);
+                listBySeperation(degreeSeparationList, 1, center, visited, low, high);
+
+                System.out.println("Here are actors sorted by " + low+ " to " +high+" separations from " + center);
+                for(int num: degreeSeparationList.keySet()) {
+                    if (!degreeSeparationList.get(num).isEmpty()) {
+
+
+                        System.out.println(num + " separations from " + center + ":");
+
+                        for (String actor : degreeSeparationList.get(num)) {
+                            System.out.println(actor);
+                        }
+                    }
+                }
+
+            }
+            // changes the center of the universe
+            else if(command.equals("u")){
+                center = sc.nextLine();
+                center = center.replaceAll("\\s", "");
+                while(!gameGraph.hasVertex(center)){
+                    System.out.println("Name not found, please input a valid name");
+                    center = sc.nextLine();
+                }
+                printCenter(center);
+
+            }
+            else if(command.equals("n")) printCommand();
+            else{
+                System.out.println("Invalid Command");
+            }
+
+            command = sc.next();
+
+        }
+
+        sc.close();
+
+    }
+
+    public void printCommand(){
+        System.out.println("Commands:" +
+                "\nc <#>: list top (positive number) or bottom (negative) <#> centers of the universe, sorted by average separation" +
+                "\nd <low> <high>: list actors sorted by degree, with degree between low and high" +
+                "\ni: list actors with infinite separation from the current center" +
+                "\np <name>: find path from <name> to current center of the universe" +
+                "\ns <low> <high>: list actors sorted by non-infinite separation from the current center, with separation between low and high" +
+                "\nu <name>: make <name> the center of the universe" +
+                "\nn: print the commands again"+
+                "\nq: quit game");
+    }
+
+    public void printCenter(String center){
+        BFS = GraphLib.bfs(gameGraph, center);
+        System.out.println(center + " is now the center of the acting universe, connected to " + BFS.numVertices() + "/" + gameGraph.numVertices()
+                + " actors with average separation " + GraphLib.averageSeparation(BFS, center));
 
     }
 
@@ -97,22 +266,35 @@ public class KevinBaconGame {
         }
     }
 
+    public void listBySeperation(Map<Integer, Set<String>> sepList, int level, String center, Set<String> visited,
+                                 int low, int high){
+        if (level> high) return;
+        Queue<String> list= new PriorityQueue<>();
+
+        for(String child: BFS.inNeighbors(center)){
+            if(!visited.contains(child)){
+                visited.add(child);
+
+                if(sepList.get(level)== null){
+                    sepList.put(level, new HashSet<>());
+                }
+                if(!(level< low)){
+                    sepList.get(level).add(child);
+                }
+
+                listBySeperation(sepList, level+1, child, visited, low, high);
+            }
+
+        }
+
+    }
+
+
 
 
     public static void main(String[] args){
 
        KevinBaconGame game = new KevinBaconGame();
-//        System.out.println(game.actorMap);
-//        System.out.println(game.movieMap);
-//        System.out.println(game.movieToActors);
-        game.createGraph();
-//        System.out.println(game.gameGraph);
-        Graph<String, Set<String>> t = new AdjacencyMapGraph<>();
-        t = (GraphLib.bfs(game.gameGraph, "Dartmouth (Earl thereof)"));
-//        System.out.println(t.outNeighbors("Dartmouth (Earl thereof)"));
-        System.out.println(t);
-        System.out.println(GraphLib.getPath(t, "Alice"));
-        System.out.println(GraphLib.missingVertices(game.gameGraph, t));
-        System.out.println(GraphLib.averageSeparation(t,"Dartmouth (Earl thereof)"));
+       game.startGame("Kevin Bacon");
     }
 }

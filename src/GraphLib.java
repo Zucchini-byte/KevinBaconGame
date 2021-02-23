@@ -119,7 +119,6 @@ public class GraphLib {
 		sum = totalStep(tree, root, 1);
 
 
-
 		return (double)sum / count;
 	}
 
