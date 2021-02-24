@@ -25,9 +25,11 @@ public class GraphLib {
 		queue.add(source);
 		pathTree.insertVertex(source);
 
+
+
 //		remember that s has been added
 //		repeat until we find the goal vertex or the queue is empty:
-		while( !queue.isEmpty()) {
+		while( !queue.isEmpty() && g.numVertices() > 0) {
 
 //		dequeue the next vertex u from the queue
 			V u = queue.remove();

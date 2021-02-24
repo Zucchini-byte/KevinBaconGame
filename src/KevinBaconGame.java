@@ -5,16 +5,16 @@ import java.io.IOException;
 import java.util.*;
 
 public class KevinBaconGame {
+
     private Map<Integer, String> movieMap;
     private Map<Integer, String> actorMap;
     private Map<Integer, Set<Integer>> movieToActors;
-    private Graph<String, Set<String>> gameGraph;
 
+    private Graph<String, Set<String>> gameGraph;
     private Graph<String, Set<String>> BFS;
 
     Map<String, Double> sepMap;
     private List<String> sortedAvg;
-
 
 
     private String command = "";
@@ -164,8 +164,10 @@ public class KevinBaconGame {
             }
             // list actors with infinite separation from the current center
             else if(command.equals("i")){
-
-                System.out.println(GraphLib.missingVertices(gameGraph, BFS));
+                System.out.println("Actors infinite separation from " +center);
+                for(String vertex: GraphLib.missingVertices(gameGraph, BFS)){
+                    System.out.println(vertex);
+                }
 
             }
             // <name> find path from <name> to current center of the universe
@@ -253,6 +255,7 @@ public class KevinBaconGame {
             command = sc.next();
 
         }
+
         System.out.println("Thanks for playing!!");
 
         sc.close();

@@ -1,0 +1,18 @@
+Who would you recommend as good and bad Bacon, in terms of degree and in terms of average separation.
+Justify, in comparison to others including Bacon himself.
+
+
+In terms of degree, a bacon with greater degree would be better than lesser degree. Greater degrees
+means that have more edges to/form a vertex there more more connections. More connections means that it
+connected to more unique people. For example Gene Hackman has a degree of 102. Kevin Bacon has a degree of 80.
+Nita Naldi has a degree of 3. Gene Hackman has the most degree would be the better Bacon than Kevin Bacon and
+Nita Naldi. Nita Naldi would be bad bacon because it's only has a degree of 3.
+
+In terms of average separation, a lesser average would be better than greater separation. Greater
+separation means that it takes more steps on average to reach therefore making it a bad bacon.
+For example Kevin Bacon has an average of 3.2814626985186175. Gene Hackman has an average of 3.0584545576.
+Nita Naldi has an average of 8.6767649806. Therefore Gene Hackman would the best bacon because it
+has the smallest average therefore the paths to Gene Hackman are the shortest on average. Nita Naldi
+would be a bad bacon because the average path is longer.
+
+
